@@ -14,7 +14,7 @@
       "type": "application",
       "root": "./",
       "entryFile": "main",
-      "sourceRoot": "./apps/auth-backend/src",
+      "sourceRoot": "./apps/backend/auth-backend/src",
       "compilerOptions": {
         "tsConfigPath": "tsconfig.json"
       }

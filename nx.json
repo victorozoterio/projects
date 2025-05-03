@@ -33,17 +33,14 @@
       "options": {
         "buildTargetName": "build",
         "serveTargetName": "serve",
-        "previewTargetName": "preview",
-        "buildDepsTargetName": "build-deps",
-        "watchDepsTargetName": "watch-deps"
+        "previewTargetName": "preview"
       }
     },
     {
       "plugin": "@nx/jest/plugin",
       "options": {
         "targetName": "test"
-      },
-      "exclude": ["apps/auth-backend-e2e/**/*"]
+      }
     }
   ],
   "targetDefaults": {
