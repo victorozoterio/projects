@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "./",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": false,
+    "tsConfigPath": "tsconfig.json"
+  },
+  "monorepo": true,
+  "root": "./",
+  "projects": {
+    "auth-backend": {
+      "type": "application",
+      "root": "./",
+      "entryFile": "main",
+      "sourceRoot": "./apps/auth-backend/src",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    }
+  }
+}

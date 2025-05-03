@@ -1,15 +1,16 @@
 {
   "name": "auth-backend",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/backend/auth-backend/src",
+  "sourceRoot": "apps/auth-backend/src",
   "projectType": "application",
   "targets": {
     "migration-create": {
-      "command": "npx typeorm migration:create apps/backend/auth-backend/src/migrations/migration-name-here"
+      "command": "npx typeorm migration:create apps/auth-backend/src/migrations/migration-name-here"
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
+        "outputPath": "../../dist/apps/auth-backend",
         "command": "webpack-cli build",
         "args": ["node-env=production"]
       },
