@@ -18,7 +18,6 @@
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "strict": true,
     "target": "es2015",
     "baseUrl": "."
   },
