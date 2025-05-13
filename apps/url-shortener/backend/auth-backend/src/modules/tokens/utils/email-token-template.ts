@@ -1,4 +1,4 @@
-import { mask, TokenType } from 'apps/backend/auth-backend/src/utils';
+import { mask, TokenType } from '../../../utils';
 
 export function emailTokenTemplate(name: string, token: number, type: TokenType): string {
   const capitalizeName = mask.capitalizeName(name);

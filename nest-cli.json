@@ -10,11 +10,11 @@
   "monorepo": true,
   "root": "./",
   "projects": {
-    "auth-backend": {
+    "url-shortener:auth-backend": {
       "type": "application",
       "root": "./",
       "entryFile": "main",
-      "sourceRoot": "./apps/backend/auth-backend/src",
+      "sourceRoot": "./apps/url-shortener/backend/auth-backend/src",
       "compilerOptions": {
         "tsConfigPath": "tsconfig.json"
       }

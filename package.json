@@ -1,11 +1,11 @@
 {
-  "name": "@url-shortener-monorepo/source",
+  "name": "@projects/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
     "format": "biome format --write .",
-    "run:auth-backend": "dotenvx run --env-file=apps/backend/auth-backend/.env -- pnpm nx s auth-backend"
+    "run:url-shortener:auth-backend": "dotenvx run --env-file=apps/url-shortener/backend/auth-backend/.env -- pnpm nx s auth-backend"
   },
   "private": true,
   "dependencies": {
