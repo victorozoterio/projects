@@ -24,7 +24,8 @@ export function emailTokenTemplate(name: string, token: number, type: TokenType)
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"  />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${emailType[type].subject}</title>
   <link href="https://fonts.googleapis.com/css2?family=Geologica:ital,wght@0,500&display=swap" rel="stylesheet">
   <style>
@@ -34,11 +35,11 @@ export function emailTokenTemplate(name: string, token: number, type: TokenType)
       padding: 0;
       box-sizing: border-box;
       font-weight: 500;
-      font-size: 16px;
+      font-size: 14px;
       line-height: 1.25;
     }
     .container {
-      max-width: 600px;
+      max-width: 500px;
       margin: 0 auto;
       background-color: #ffffff;
       border-radius: 8px;
@@ -47,13 +48,13 @@ export function emailTokenTemplate(name: string, token: number, type: TokenType)
     .header {
       background-color: #202020;
       color: #ffffff;
-      padding: 30px;
+      padding: 25px;
       text-align: left;
     }
     .logo {
       display: block;
-      width: 100px;
-      margin-bottom: 30px;
+      width: 80px;
+      margin-bottom: 25px;
     }
     .header-info {
       display: flex;
@@ -61,47 +62,39 @@ export function emailTokenTemplate(name: string, token: number, type: TokenType)
     }
     .header-bar {
       width: 2px;
-      height: 24px;
+      height: 20px;
       background-color: #8E24EB;
-      margin-right: 12px;
+      margin-right: 10px;
     }
     .header-text {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 500;
       margin: 0;
     }
     .content {
-      padding: 30px;
+      padding: 25px;
       color: #000000;
     }
     .content h1 {
-      font-size: 22px;
+      font-size: 20px;
       margin-top: 0;
     }
     .token {
       display: flex;
       justify-content: center;
-      margin: 25px 0;
+      margin: 20px 0;
       position: relative;
-    }
-    .token-hidden {
-      position: absolute;
-      font-size: 0;
-      height: 0;
-      overflow: hidden;
-      color: transparent;
-      user-select: all;
     }
     .token-box {
       display: inline-block;
       background-color: #E6E6E6;
       border-radius: 8px;
-      padding: 15px 20px;
-      font-size: 22px;
+      padding: 12px 16px;
+      font-size: 20px;
       font-weight: bold;
       text-align: center;
-      width: 44px;
-      margin-right: 8px;
+      width: 38px;
+      margin-right: 6px;
       white-space: nowrap;
     }
     .token-box:last-child {
@@ -111,8 +104,8 @@ export function emailTokenTemplate(name: string, token: number, type: TokenType)
       background-color: #202020;
       color: #B8B8B8;
       text-align: left;
-      font-size: 12px;
-      padding: 15px 30px;
+      font-size: 11px;
+      padding: 12px 25px;
     }
   </style>
 </head>
@@ -123,6 +116,9 @@ export function emailTokenTemplate(name: string, token: number, type: TokenType)
       <div class="header-info">
         <div class="header-bar"></div>
         <p class="header-text">${emailType[type].subject}</p>
+        <div style="display:none; font-size:1px; color:#fff; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden;">
+          Código de acesso: 
+        </div>
       </div>
     </div>
     <div class="content">
@@ -130,7 +126,6 @@ export function emailTokenTemplate(name: string, token: number, type: TokenType)
       <p>Esperamos que esteja bem!</p>
       <p>${emailType[type].message}</p>
       <div class="token">
-        <span class="token-hidden">${tokenString}</span>
         ${tokenDigits}
       </div>
       <p><strong>Atenção!</strong> Esse código expira em 30 minutos!</p>
