@@ -9,5 +9,6 @@ import { TokensService } from './tokens.service';
   imports: [TypeOrmModule.forFeature([TokenEntity, UserEntity])],
   controllers: [TokensController],
   providers: [TokensService],
+  exports: [TokensService],
 })
 export class TokensModule {}

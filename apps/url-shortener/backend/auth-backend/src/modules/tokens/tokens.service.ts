@@ -30,10 +30,6 @@ export class TokensService {
     if (!user) throw new NotFoundException('User does not exist.');
 
     const userWithToken = await this.repository.findOneBy({ userUuid: { uuid: dto.userUuid }, type: dto.type });
-    if (userWithToken?.expiresAt && userWithToken?.expiresAt > new Date()) {
-      throw new ConflictException('User already has a valid token.');
-    }
-
     const token = generateRandomCode(6);
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 30);

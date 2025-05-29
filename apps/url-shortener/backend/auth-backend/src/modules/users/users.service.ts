@@ -10,6 +10,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { awsConfig } from '../../config';
 import { SignInUserDto } from './dto/sign-in-user.dto';
+import { TokensService } from '../tokens/tokens.service';
+import { TokenType } from '../../utils';
+import { ResetPasswordUserDto } from './dto/reset-password-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -17,11 +20,17 @@ export class UsersService {
   private readonly userPoolId = process.env.AWS_COGNITO_USER_POOL_ID;
 
   constructor(
+    private readonly tokensService: TokensService,
     @InjectRepository(UserEntity)
     private readonly repository: Repository<UserEntity>,
   ) {}
 
   async create(dto: CreateUserDto) {
+    const userAlreadyExists = await this.repository.findOneBy({ email: dto.email });
+    if (userAlreadyExists && !userAlreadyExists.isVerified) {
+      return await this.tokensService.create({ userUuid: userAlreadyExists.uuid, type: TokenType.EMAIL_VERIFICATION });
+    }
+
     try {
       const cognitoUser = await this.cognito.send(
         new AdminCreateUserCommand({
@@ -45,9 +54,7 @@ export class UsersService {
         }),
       );
 
-      const userAlreadyExists = await this.repository.findOneBy({ email: dto.email });
       let user = userAlreadyExists;
-
       if (!userAlreadyExists) {
         user = this.repository.create({
           uuid: cognitoUser.User?.Username,
@@ -57,7 +64,7 @@ export class UsersService {
       }
 
       await this.repository.save(user);
-
+      await this.tokensService.create({ userUuid: user.uuid, type: TokenType.EMAIL_VERIFICATION });
       return { uuid: cognitoUser.User?.Username, ...user };
     } catch (err) {
       if (err.name === 'UsernameExistsException') {
@@ -74,7 +81,8 @@ export class UsersService {
 
   async signIn(dto: SignInUserDto) {
     const user = await this.repository.findOneBy({ email: dto.email });
-    if (!user?.isVerified) throw new UnauthorizedException('User not verified.');
+    if (!user) throw new NotFoundException('User does not exist.');
+    if (!user.isVerified) throw new UnauthorizedException('User not verified.');
 
     try {
       const response = await this.cognito.send(
@@ -98,5 +106,12 @@ export class UsersService {
     } catch (_err) {
       throw new NotFoundException('Invalid email or password.');
     }
+  }
+
+  async resetPassword(dto: ResetPasswordUserDto) {
+    const user = await this.repository.findOneBy({ email: dto.email });
+    if (!user) throw new NotFoundException('User does not exist.');
+    await this.tokensService.create({ userUuid: user.uuid, type: TokenType.PASSWORD_RESET });
+    return { message: 'Password reset token created. Please check your email.' };
   }
 }
