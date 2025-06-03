@@ -5,7 +5,8 @@
   "scripts": {
     "prepare": "husky install",
     "format": "biome format --write .",
-    "run:url-shortener:auth-backend": "dotenvx run --env-file=apps/url-shortener/backend/auth-backend/.env -- pnpm nx s auth-backend"
+    "run:url-shortener:auth-backend": "dotenvx run --env-file=apps/url-shortener/backend/auth-backend/.env -- pnpm nx s auth-backend",
+    "run:url-shortener:management-backend": "dotenvx run --env-file=apps/url-shortener/backend/management-backend/.env -- pnpm nx s management-backend"
   },
   "private": true,
   "dependencies": {
