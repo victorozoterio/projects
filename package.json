@@ -5,14 +5,12 @@
   "scripts": {
     "prepare": "husky install",
     "format": "biome format --write .",
-    "run:url-shortener:auth-backend": "dotenvx run --env-file=apps/url-shortener/backend/auth-backend/.env -- pnpm nx s auth-backend",
-    "run:url-shortener:management-backend": "dotenvx run --env-file=apps/url-shortener/backend/management-backend/.env -- pnpm nx s management-backend"
+    "run:url-shortener:auth-backend": "pnpm nx s auth-backend",
+    "run:url-shortener:management-backend": "pnpm nx s management-backend"
   },
-  "private": true,
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.806.0",
     "@aws-sdk/client-ses": "^3.806.0",
-    "@dotenvx/dotenvx": "^1.42.2",
     "@nestjs/common": "^10.0.2",
     "@nestjs/core": "^10.0.2",
     "@nestjs/platform-express": "^10.0.2",
