@@ -26,11 +26,6 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto) {
-    const userAlreadyExists = await this.repository.findOneBy({ email: dto.email });
-    if (userAlreadyExists && !userAlreadyExists.isVerified) {
-      return await this.tokensService.create({ userUuid: userAlreadyExists.uuid, type: TokenType.EMAIL_VERIFICATION });
-    }
-
     try {
       const cognitoUser = await this.cognito.send(
         new AdminCreateUserCommand({
@@ -54,18 +49,15 @@ export class UsersService {
         }),
       );
 
-      let user = userAlreadyExists;
-      if (!userAlreadyExists) {
-        user = this.repository.create({
-          uuid: cognitoUser.User?.Username,
-          name: dto.name,
-          email: dto.email,
-        });
-      }
+      const user = this.repository.create({
+        uuid: cognitoUser.User?.Username,
+        name: dto.name,
+        email: dto.email,
+      });
 
       await this.repository.save(user);
       await this.tokensService.create({ userUuid: user.uuid, type: TokenType.EMAIL_VERIFICATION });
-      return { uuid: cognitoUser.User?.Username, ...user };
+      return user;
     } catch (err) {
       if (err.name === 'UsernameExistsException') {
         throw new ConflictException('User already exists.');

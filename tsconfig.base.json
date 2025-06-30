@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@url-shortener/backend/*": ["apps/url-shortener/backend/*"],
       "@projects/shared/backend": ["shared/backend/src/index.ts"]
     }
   },

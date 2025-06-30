@@ -1,40 +1,13 @@
 {
-  "name": "auth-backend",
+  "name": "url-shortener-auth-backend",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/url-shortener/backend/auth-backend/src",
-  "projectType": "application",
+  "sourceRoot": "apps/url-shortener/backend/auth-backend",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project url-shortener-auth-backend --web",
   "targets": {
     "migration-create": {
       "command": "npx typeorm migration:create apps/url-shortener/backend/auth-backend/src/migrations/migration-name-here"
-    },
-    "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "webpack-cli build",
-        "args": ["node-env=production"]
-      },
-      "configurations": {
-        "development": {
-          "args": ["node-env=development"]
-        }
-      }
-    },
-    "serve": {
-      "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "auth-backend:build",
-        "runBuildTargetDependencies": false
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "auth-backend:build:development"
-        },
-        "production": {
-          "buildTarget": "auth-backend:build:production"
-        }
-      }
     }
-  },
-  "tags": []
+  }
 }

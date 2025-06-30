@@ -1,40 +1,13 @@
 {
-  "name": "management-backend",
+  "name": "url-shortener-management-backend",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/url-shortener/backend/management-backend/src",
-  "projectType": "application",
+  "sourceRoot": "apps/url-shortener/backend/management-backend",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project url-shortener-management-backend --web",
   "targets": {
     "migration-create": {
       "command": "npx typeorm migration:create apps/url-shortener/backend/management-backend/src/migrations/migration-name-here"
-    },
-    "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "webpack-cli build",
-        "args": ["node-env=production"]
-      },
-      "configurations": {
-        "development": {
-          "args": ["node-env=development"]
-        }
-      }
-    },
-    "serve": {
-      "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "management-backend:build",
-        "runBuildTargetDependencies": false
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "management-backend:build:development"
-        },
-        "production": {
-          "buildTarget": "management-backend:build:production"
-        }
-      }
     }
-  },
-  "tags": []
+  }
 }

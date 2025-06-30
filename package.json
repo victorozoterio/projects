@@ -6,7 +6,8 @@
     "prepare": "husky install",
     "format": "biome format --write .",
     "run:url-shortener:auth-backend": "pnpm nx s auth-backend",
-    "run:url-shortener:management-backend": "pnpm nx s management-backend"
+    "run:url-shortener:management-backend": "pnpm nx s management-backend",
+    "run:url-shortener:root-backend": "pnpm nx s url-shortener-root-backend"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.806.0",
