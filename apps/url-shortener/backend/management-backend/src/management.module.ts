@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { CampaignsModule } from './modules/campaigns/campaigns.module';
 
 @Module({
-  imports: [],
+  imports: [CampaignsModule],
   controllers: [],
   providers: [],
 })
