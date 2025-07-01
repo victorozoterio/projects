@@ -1,3 +1,4 @@
+import { PaginateModule } from '@projects/shared/backend';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CampaignsController } from './campaigns.controller';
@@ -5,7 +6,7 @@ import { CampaignsService } from './campaigns.service';
 import { CampaignEntity } from './entities/campaign.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CampaignEntity])],
+  imports: [TypeOrmModule.forFeature([CampaignEntity]), PaginateModule],
   controllers: [CampaignsController],
   providers: [CampaignsService],
 })

@@ -1,8 +1,21 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CampaignsService } from './campaigns.service';
-import { CampaignResponseDto } from './dto/campaign.dto';
+import { CampaignResponseDto, PaginatedCampaignResponseDto } from './dto/campaign.dto';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
+import { QueryCampaignDto } from './dto/query-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 
 @Controller('campaigns')
@@ -19,9 +32,9 @@ export class CampaignsController {
 
   @Get()
   @ApiOperation({ summary: 'Retrieves information about all campaigns.' })
-  @ApiResponse({ status: 200, isArray: true })
-  async findAll() {
-    return await this.campaignsService.findAll();
+  @ApiResponse({ status: 200, type: PaginatedCampaignResponseDto, isArray: true })
+  async findAll(@Query() query: QueryCampaignDto) {
+    return await this.campaignsService.findAll(query);
   }
 
   @Put(':uuid')

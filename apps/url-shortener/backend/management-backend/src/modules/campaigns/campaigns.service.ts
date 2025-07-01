@@ -1,13 +1,16 @@
+import { PaginateService } from '@projects/shared/backend';
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
+import { QueryCampaignDto } from './dto/query-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import { CampaignEntity } from './entities/campaign.entity';
 
 @Injectable()
 export class CampaignsService {
   constructor(
+    private readonly paginateService: PaginateService,
     @InjectRepository(CampaignEntity)
     private readonly repository: Repository<CampaignEntity>,
   ) {}
@@ -19,8 +22,15 @@ export class CampaignsService {
     return this.repository.save(campaign);
   }
 
-  async findAll() {
-    return this.repository.find();
+  async findAll(query: QueryCampaignDto) {
+    const keyMap = { name: (value: string) => ({ name: ILike(`%${value}%`) }) };
+
+    return this.paginateService.paginate({
+      query,
+      keyMap,
+      repository: this.repository,
+      where: {},
+    });
   }
 
   async update(uuid: string, dto: UpdateCampaignDto) {
