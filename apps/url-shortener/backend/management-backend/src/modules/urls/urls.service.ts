@@ -40,20 +40,34 @@ export class UrlsService {
   }
 
   async findOne(shortId: string, res: Response) {
-    const urlExists = await this.repository.findOne({ where: { shortId }, relations: ['campaign'] });
-    if (!urlExists) throw new NotFoundException('Url does not exist.');
+    const url = await this.repository.findOne({ where: { shortId }, relations: ['campaign'] });
+    if (!url) throw new NotFoundException('Url does not exist.');
 
-    if (urlExists.expirationTimeInMinutes) {
+    if (url.expirationTimeInMinutes) {
       const expirationInMilliseconds = new Date(
-        urlExists.createdAt.getTime() + urlExists.expirationTimeInMinutes * UrlsService.MILLISECONDS_IN_MINUTE,
+        url.createdAt.getTime() + url.expirationTimeInMinutes * UrlsService.MILLISECONDS_IN_MINUTE,
       );
 
-      if (new Date() > expirationInMilliseconds && !urlExists.campaign) await this.repository.remove(urlExists);
+      if (new Date() > expirationInMilliseconds && !url.campaign) await this.repository.remove(url);
       if (new Date() > expirationInMilliseconds) throw new NotFoundException('Url does not exist.');
     }
 
-    this.repository.merge(urlExists, { clicks: urlExists.clicks + 1 });
-    await this.repository.save(urlExists);
-    return res.redirect(urlExists.originalUrl);
+    this.repository.merge(url, { clicks: url.clicks + 1 });
+    await this.repository.save(url);
+    return res.redirect(url.originalUrl);
+  }
+
+  async getMetrics(shortId: string) {
+    const url = await this.repository.findOne({ where: { shortId }, relations: ['campaign'] });
+    if (!url) throw new NotFoundException('Url does not exist.');
+
+    let expiratesAt: Date | null = null;
+    if (url.expirationTimeInMinutes) {
+      expiratesAt = new Date(
+        url.createdAt.getTime() + url.expirationTimeInMinutes * UrlsService.MILLISECONDS_IN_MINUTE,
+      );
+    }
+
+    return { clicks: url.clicks, createdAt: url.createdAt, expiratesAt };
   }
 }

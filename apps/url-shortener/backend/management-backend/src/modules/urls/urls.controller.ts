@@ -14,13 +14,20 @@ export class UrlsController {
   @ApiOperation({ summary: 'Creates a new shortened url in the system.' })
   @ApiResponse({ status: 201, type: UrlResponseDto })
   async create(@Body() dto: CreateUrlDto, @Req() req: Request) {
-    return this.urlsService.create(dto, req);
+    return await this.urlsService.create(dto, req);
   }
 
   @Get(':shortId')
   @ApiOperation({ summary: 'Redirects to the original url.' })
   @ApiResponse({ status: 200 })
   async findOne(@Param('shortId') shortId: string, @Res() res: Response) {
-    return this.urlsService.findOne(shortId, res);
+    return await this.urlsService.findOne(shortId, res);
+  }
+
+  @Get(':shortId/metrics')
+  @ApiOperation({ summary: 'Retrieves metrics about a specific shortened url.' })
+  @ApiResponse({ status: 200 })
+  async getMetrics(@Param('shortId') shortId: string) {
+    return await this.urlsService.getMetrics(shortId);
   }
 }

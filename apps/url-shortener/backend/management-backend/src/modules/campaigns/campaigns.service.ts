@@ -6,6 +6,7 @@ import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { QueryCampaignDto } from './dto/query-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 import { CampaignEntity } from './entities/campaign.entity';
+import { UrlEntity } from '../urls/entities/url.entity';
 
 @Injectable()
 export class CampaignsService {
@@ -13,6 +14,8 @@ export class CampaignsService {
     private readonly paginateService: PaginateService,
     @InjectRepository(CampaignEntity)
     private readonly repository: Repository<CampaignEntity>,
+    @InjectRepository(UrlEntity)
+    private readonly urlRepository: Repository<UrlEntity>,
   ) {}
 
   async create(dto: CreateCampaignDto) {
@@ -31,6 +34,15 @@ export class CampaignsService {
       repository: this.repository,
       where: {},
     });
+  }
+
+  async getMetrics(uuid: string) {
+    const campaign = await this.repository.findOneBy({ uuid });
+    if (!campaign) throw new NotFoundException('Campaign does not exist.');
+
+    const urls = await this.urlRepository.find({ where: { campaign: { uuid } } });
+    const clicks = urls.reduce((sum, url) => sum + url.clicks, 0);
+    return { clicks, createdAt: campaign.createdAt };
   }
 
   async update(uuid: string, dto: UpdateCampaignDto) {

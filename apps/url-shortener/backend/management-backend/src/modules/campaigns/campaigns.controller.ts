@@ -37,6 +37,13 @@ export class CampaignsController {
     return await this.campaignsService.findAll(query);
   }
 
+  @Get(':uuid/metrics')
+  @ApiOperation({ summary: 'Retrieves metrics about a specific campaign.' })
+  @ApiResponse({ status: 200 })
+  async getMetrics(@Param('uuid', new ParseUUIDPipe()) uuid: string) {
+    return await this.campaignsService.getMetrics(uuid);
+  }
+
   @Put(':uuid')
   @ApiOperation({ summary: 'Updates information of an existing campaign.' })
   @ApiResponse({ status: 200, type: CampaignResponseDto })
