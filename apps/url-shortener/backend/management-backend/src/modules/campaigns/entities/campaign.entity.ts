@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { UrlEntity } from '../../urls/entities/url.entity';
 
 @Entity('campaigns')
 export class CampaignEntity {
@@ -13,4 +14,10 @@ export class CampaignEntity {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(
+    () => UrlEntity,
+    (urls) => urls.campaign,
+  )
+  urls: UrlEntity[];
 }
