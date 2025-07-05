@@ -11,13 +11,14 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CampaignsService } from './campaigns.service';
 import { CampaignResponseDto, PaginatedCampaignResponseDto } from './dto/campaign.dto';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { QueryCampaignDto } from './dto/query-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 
+@ApiSecurity('x-api-key')
 @Controller('campaigns')
 @ApiTags('Campaigns')
 export class CampaignsController {

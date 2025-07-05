@@ -1,9 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { ValidateTokenDto } from './dto/validate-token.dto';
 import { TokensService } from './tokens.service';
 
-@ApiBearerAuth()
+@ApiSecurity('x-api-key')
 @ApiTags('Tokens')
 @Controller('tokens')
 export class TokensController {

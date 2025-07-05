@@ -1,10 +1,11 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { SignInUserDto } from './dto/sign-in-user.dto';
 import { ResetPasswordUserDto } from './dto/reset-password-user.dto';
 
+@ApiSecurity('x-api-key')
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
