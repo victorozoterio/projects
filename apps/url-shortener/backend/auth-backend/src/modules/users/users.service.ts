@@ -3,7 +3,7 @@ import {
   AdminSetUserPasswordCommand,
   InitiateAuthCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,6 +16,7 @@ import { ResetPasswordUserDto } from './dto/reset-password-user.dto';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   private readonly cognito = awsConfig().cognito;
   private readonly userPoolId = process.env.AWS_COGNITO_USER_POOL_ID;
 
@@ -26,6 +27,8 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto) {
+    this.logger.log('Starting create user process');
+
     try {
       const cognitoUser = await this.cognito.send(
         new AdminCreateUserCommand({
@@ -57,8 +60,15 @@ export class UsersService {
 
       await this.repository.save(user);
       await this.tokensService.create({ userUuid: user.uuid, type: TokenType.EMAIL_VERIFICATION });
+
+      this.logger.log('User created successfully');
       return user;
     } catch (err) {
+      this.logger.error(
+        `Error creating user (DTO: ${JSON.stringify(dto)}) - Error: ${err.message ? err.message : JSON.stringify(err)}`,
+        err.stack,
+      );
+
       if (err.name === 'UsernameExistsException') {
         throw new ConflictException('User already exists.');
       }
@@ -72,6 +82,8 @@ export class UsersService {
   }
 
   async signIn(dto: SignInUserDto) {
+    this.logger.log('Starting user sign-in process');
+
     const user = await this.repository.findOneBy({ email: dto.email });
     if (!user) throw new NotFoundException('User does not exist.');
     if (!user.isVerified) throw new UnauthorizedException('User not verified.');
@@ -88,6 +100,7 @@ export class UsersService {
         }),
       );
 
+      this.logger.log('User signed in successfully');
       return {
         accessToken: response.AuthenticationResult?.AccessToken,
         idToken: response.AuthenticationResult?.IdToken,
@@ -95,15 +108,32 @@ export class UsersService {
         expiresIn: response.AuthenticationResult?.ExpiresIn,
         tokenType: response.AuthenticationResult?.TokenType,
       };
-    } catch (_err) {
+    } catch (err) {
+      this.logger.error(
+        `Error signing in user (DTO: ${JSON.stringify(dto)}) - Error: ${err.message ? err.message : JSON.stringify(err)}`,
+        err.stack,
+      );
+
       throw new NotFoundException('Invalid email or password.');
     }
   }
 
   async resetPassword(dto: ResetPasswordUserDto) {
+    this.logger.log('Starting reset password process');
+
     const user = await this.repository.findOneBy({ email: dto.email });
     if (!user) throw new NotFoundException('User does not exist.');
-    await this.tokensService.create({ userUuid: user.uuid, type: TokenType.PASSWORD_RESET });
-    return { message: 'Password reset token created. Please check your email.' };
+
+    try {
+      await this.tokensService.create({ userUuid: user.uuid, type: TokenType.PASSWORD_RESET });
+      this.logger.log('Password reset token created successfully');
+      return { message: 'Password reset token created. Please check your email.' };
+    } catch (err) {
+      this.logger.error(
+        `Error creating password reset token (DTO: ${JSON.stringify(dto)}) - Error: ${err.message ? err.message : JSON.stringify(err)}`,
+        err.stack,
+      );
+      throw new NotFoundException('Error generating password reset token.');
+    }
   }
 }

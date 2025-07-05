@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../users/entities/user.entity';
@@ -15,6 +15,7 @@ import {
 
 @Injectable()
 export class TokensService {
+  private readonly logger = new Logger(TokensService.name);
   private readonly cognito = awsConfig().cognito;
   private readonly userPoolId = process.env.AWS_COGNITO_USER_POOL_ID;
 
@@ -26,6 +27,8 @@ export class TokensService {
   ) {}
 
   async create(dto: CreateTokenDto) {
+    this.logger.log('Starting create token process');
+
     const user = await this.userRepository.findOneBy({ uuid: dto.userUuid });
     if (!user) throw new NotFoundException('User does not exist.');
 
@@ -42,6 +45,8 @@ export class TokensService {
         subject: dto.type === TokenType.EMAIL_VERIFICATION ? 'Confirme seu e-mail' : 'Redefinição de senha',
         body: emailTokenTemplate(user.name, token, dto.type),
       });
+
+      this.logger.log('Token updated and email sent');
       return this.repository.save(userWithToken);
     }
 
@@ -53,10 +58,13 @@ export class TokensService {
       body: emailTokenTemplate(user.name, token, dto.type),
     });
 
+    this.logger.log('Token created and email sent');
     return this.repository.save(createdToken);
   }
 
   private async validateAndReturnUserIfValidTokenExists(dto: ValidateTokenDto, type: TokenType) {
+    this.logger.log('Starting token validation process');
+
     const user = await this.userRepository.findOneBy({ uuid: dto.userUuid });
     if (!user) throw new NotFoundException('User does not exist.');
 
@@ -68,13 +76,17 @@ export class TokensService {
     }
 
     if (userWithToken.token !== dto.token) throw new ConflictException('Invalid token.');
+
+    this.logger.log('Token validation successful');
     return user;
   }
 
   async validateEmailVerificationToken(dto: ValidateTokenDto) {
+    this.logger.log('Starting email verification token validation');
+
     const user = await this.validateAndReturnUserIfValidTokenExists(dto, TokenType.EMAIL_VERIFICATION);
     this.userRepository.merge(user, { isVerified: true });
-    this.userRepository.save(user);
+    await this.userRepository.save(user);
 
     await this.cognito.send(
       new AdminUpdateUserAttributesCommand({
@@ -84,10 +96,13 @@ export class TokensService {
       }),
     );
 
+    this.logger.log('Email verified successfully');
     return { message: 'Email verified successfully.' };
   }
 
   async validatePasswordResetToken(dto: ValidateTokenDto) {
+    this.logger.log('Starting password reset token validation');
+
     if (!dto.password) throw new ConflictException('Password is required.');
 
     const user = await this.validateAndReturnUserIfValidTokenExists(dto, TokenType.PASSWORD_RESET);
@@ -100,6 +115,7 @@ export class TokensService {
       }),
     );
 
+    this.logger.log('Password reset successfully');
     return { message: 'Password reset successfully.' };
   }
 }
