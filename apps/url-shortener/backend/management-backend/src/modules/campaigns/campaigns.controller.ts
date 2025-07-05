@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from '@projects/shared/backend';
 import {
   Body,
   Controller,
@@ -10,8 +11,9 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CampaignsService } from './campaigns.service';
 import { CampaignResponseDto, PaginatedCampaignResponseDto } from './dto/campaign.dto';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
@@ -19,6 +21,8 @@ import { QueryCampaignDto } from './dto/query-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 
 @ApiSecurity('x-api-key')
+@ApiBearerAuth('bearer-token')
+@UseGuards(JwtAuthGuard)
 @Controller('campaigns')
 @ApiTags('Campaigns')
 export class CampaignsController {

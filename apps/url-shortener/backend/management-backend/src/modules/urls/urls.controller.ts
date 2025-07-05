@@ -1,11 +1,14 @@
-import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '@projects/shared/backend';
+import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { UrlsService } from './urls.service';
 import { UrlResponseDto } from './dto/url.dto';
 
 @ApiSecurity('x-api-key')
+@ApiBearerAuth('bearer-token')
+@UseGuards(JwtAuthGuard)
 @Controller('')
 @ApiTags('Urls')
 export class UrlsController {

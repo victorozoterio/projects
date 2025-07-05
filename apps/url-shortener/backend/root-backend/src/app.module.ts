@@ -4,11 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@url-shortener/backend/auth-backend';
 import { ManagementModule } from '@url-shortener/backend/management-backend';
 import { databaseConfig } from './config';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
-  imports: [TypeOrmModule.forRootAsync(databaseConfig), HealthzModule, AuthModule, ManagementModule],
+  imports: [PassportModule, TypeOrmModule.forRootAsync(databaseConfig), HealthzModule, AuthModule, ManagementModule],
   controllers: [],
-  providers: [],
+  providers: [JwtStrategy],
 })
 export class AppRootModule {
   configure(consumer: MiddlewareConsumer) {
