@@ -1,5 +1,5 @@
 import { HealthzModule, XApiKeyMiddleware } from '@projects/shared/backend';
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@url-shortener/backend/auth-backend';
 import { ManagementModule } from '@url-shortener/backend/management-backend';
@@ -14,6 +14,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 })
 export class AppRootModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(XApiKeyMiddleware).exclude('healthz').forRoutes('*');
+    consumer
+      .apply(XApiKeyMiddleware)
+      .exclude('healthz', { path: '/:shortId', method: RequestMethod.GET })
+      .forRoutes('*');
   }
 }

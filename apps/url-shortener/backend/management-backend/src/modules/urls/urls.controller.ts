@@ -8,13 +8,13 @@ import { UrlResponseDto } from './dto/url.dto';
 
 @ApiSecurity('x-api-key')
 @ApiBearerAuth('bearer-token')
-@UseGuards(JwtAuthGuard)
 @Controller('')
 @ApiTags('Urls')
 export class UrlsController {
   constructor(private readonly urlsService: UrlsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Creates a new shortened url in the system.' })
   @ApiResponse({ status: 201, type: UrlResponseDto })
   async create(@Body() dto: CreateUrlDto, @Req() req: Request) {
@@ -29,6 +29,7 @@ export class UrlsController {
   }
 
   @Get(':shortId/metrics')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Retrieves metrics about a specific shortened url.' })
   @ApiResponse({ status: 200 })
   async getMetrics(@Param('shortId') shortId: string) {
