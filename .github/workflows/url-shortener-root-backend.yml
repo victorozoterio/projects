@@ -1,0 +1,19 @@
+name: URL-SHORTENER | ROOT | BACKEND
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/url-shortener/backend/**'
+
+jobs:
+  deploy:
+    name: Deploy to Coolify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Coolify Deploy
+        run: |
+          curl -X POST 'https://coolify.victorozoterio.site/api/v1/deploy?uuid=joggc04skc008wks44ko0004&force=false' \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_DEPLOY_TOKEN }}"
