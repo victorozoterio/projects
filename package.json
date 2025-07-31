@@ -5,6 +5,7 @@
   "scripts": {
     "prepare": "husky install",
     "format": "biome format --write .",
+    "run:cash-or-installments-calculator:root-backend": "pnpm nx s cash-or-installments-calculator-root-backend",
     "run:url-shortener:root-backend": "pnpm nx s url-shortener-root-backend"
   },
   "dependencies": {
