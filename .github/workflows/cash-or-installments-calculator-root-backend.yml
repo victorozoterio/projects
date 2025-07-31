@@ -1,0 +1,19 @@
+name: CASH-OR-INSTALLMENTS-CALCULATOR | ROOT | BACKEND
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/cash-or-installments-calculator/backend/**'
+
+jobs:
+  deploy:
+    name: Deploy to Coolify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Coolify Deploy
+        run: |
+          curl -X POST 'https://coolify.victorozoterio.site/api/v1/deploy?uuid=mgkc4k08cwkkcwg080oog8kw&force=false' \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_DEPLOY_TOKEN }}"
