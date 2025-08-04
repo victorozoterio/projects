@@ -1,3 +1,4 @@
+import { formatCurrencyBRL, formatDecimalBR } from '@projects/shared/backend';
 import { Injectable, Logger } from '@nestjs/common';
 import { CalculatorDto } from './dto/calculator.dto';
 
@@ -27,12 +28,12 @@ export class CalculatorService {
     const cashSavings = totalInstallmentValue - dto.cashValue;
 
     const result = netEarnings > cashSavings ? 'É melhor pagar parcelado!' : 'É melhor pagar à vista!';
-    const note = `Foi considerada uma taxa Selic de ${dto.annualSelicRatePercent.toFixed(2)}%, uma alíquota de imposto de renda de ${INCOME_TAX_RATE}% e simulado uma aplicação de R$${(totalInstallmentValue - dto.installmentValue).toFixed(2)} em um CDB de liquidez diária (100% do CDI), onde R$${dto.installmentValue} são sacados todos os meses para pagar as parcelas.`;
+    const note = `Foi considerada uma taxa Selic de ${formatDecimalBR(dto.annualSelicRatePercent)}%, uma alíquota de imposto de renda de ${formatDecimalBR(INCOME_TAX_RATE)}% e simulado uma aplicação de ${formatCurrencyBRL(totalInstallmentValue - dto.installmentValue)} em um CDB de liquidez diária (100% do CDI), onde ${formatCurrencyBRL(dto.installmentValue)} são sacados todos os meses para pagar as parcelas.`;
 
     return {
       result,
-      cashOption: `Pagando em dinheiro você economizará R$${cashSavings.toFixed(2)}`,
-      installmentOption: `Pagando parcelado você economizará R$${netEarnings.toFixed(2)}`,
+      cashOption: `Pagando em dinheiro você economizará ${formatCurrencyBRL(cashSavings)}`,
+      installmentOption: `Pagando parcelado você economizará ${formatCurrencyBRL(netEarnings)}`,
       note,
     };
   }
