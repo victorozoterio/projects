@@ -17,12 +17,19 @@ Este repositório centraliza os principais projetos desenvolvidos para o meu por
 
 <h2 id="urls">📱 URLs</h2>
 
+### **Calculadora: À Vista ou Parcelado?**
+
+| 🌟 Produto  | 🌍 Produção                                                             |
+|-------------|-------------------------------------------------------------------------|
+| Front-end   | [🔗 Produção](https://avistaouparcelado.vercel.app)   |
+| Back-end    | [🔗 Produção](https://api-avistaouparcelado.victorozoterio.site/docs)   |
+
 ### **Encurtador de Url**
 
-| 🌟 Produto  | 🌍 Produção                                                        |
-|-------------|--------------------------------------------------------------------|
-| Front-end   | <s>[🔗 Produção]()</s>                                            |
-| Back-end    | [🔗 Produção](https://reduza-me.victorozoterio.site)               |
+| 🌟 Produto  | 🌍 Produção                                                             |
+|-------------|-------------------------------------------------------------------------|
+| Front-end   | <s>[🔗 Produção]()</s>                                                  |
+| Back-end    | [🔗 Produção](https://reduza-me.victorozoterio.site/docs)               |
 
 <h2 id="installation">⚙️ Instalação</h2>
 
