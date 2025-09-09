@@ -10,6 +10,24 @@
   "monorepo": true,
   "root": "./",
   "projects": {
+    "cash-or-installments-calculator:root-backend": {
+      "type": "application",
+      "root": "./",
+      "entryFile": "main",
+      "sourceRoot": "./apps/cash-or-installments-calculator/backend/root-backend/src",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "investments-price-alert:root-backend": {
+      "type": "application",
+      "root": "./",
+      "entryFile": "main",
+      "sourceRoot": "./apps/investments-price-alert/backend/root-backend/src",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
     "url-shortener:auth-backend": {
       "type": "application",
       "root": "./",
