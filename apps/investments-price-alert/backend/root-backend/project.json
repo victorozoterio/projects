@@ -4,6 +4,9 @@
   "sourceRoot": "apps/investments-price-alert/backend/root-backend/src",
   "projectType": "application",
   "targets": {
+    "migration-create": {
+      "command": "npx typeorm migration:create apps/investments-price-alert/backend/root-backend/src/migrations/migration-name-here"
+    },
     "build": {
       "executor": "nx:run-commands",
       "options": {
