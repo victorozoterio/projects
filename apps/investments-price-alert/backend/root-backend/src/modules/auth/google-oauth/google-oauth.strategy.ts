@@ -22,7 +22,13 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(_accessToken: string, _refreshToken: string, profile, done: VerifyCallback) {
-    console.log('Google Profile:', profile);
-    done(null, profile);
+    const user = await this.authService.validateGoogleUser({
+      email: profile.emails[0].value,
+      firstName: profile.name.givenName,
+      lastName: profile.name.familyName,
+      avatarUrl: profile.photos[0].value,
+    });
+
+    done(null, user);
   }
 }
