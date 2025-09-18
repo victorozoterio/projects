@@ -1,12 +1,27 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, ParseUUIDPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { BearerAuthGuard, UserDecorator } from '@projects/shared/backend';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  ParseUUIDPipe,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { InvestmentsService } from './investments.service';
 import { CreateInvestmentDto } from './dto/create-investment.dto';
-import { UserDecorator } from '../../decorators';
 import { UserEntity } from '../users/entities/user.entity';
-import { ApiHeaders, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeaders, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { InvestmentResponseDto } from './dto/investment.dto';
 import { UpdateInvestmentDto } from './dto/update-investment.dto';
 
+ApiSecurity('x-api-key');
+@ApiBearerAuth('bearer-token')
+@UseGuards(BearerAuthGuard)
 @ApiTags('Investments')
 @Controller('investments')
 export class InvestmentsController {

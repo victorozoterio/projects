@@ -1,4 +1,4 @@
-import { JwtAuthGuard } from '@projects/shared/backend';
+import { BearerAuthGuard } from '@projects/shared/backend';
 import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -14,7 +14,7 @@ export class UrlsController {
   constructor(private readonly urlsService: UrlsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BearerAuthGuard)
   @ApiOperation({ summary: 'Creates a new shortened url in the system.' })
   @ApiResponse({ status: 201, type: UrlResponseDto })
   async create(@Body() dto: CreateUrlDto, @Req() req: Request) {
@@ -29,7 +29,7 @@ export class UrlsController {
   }
 
   @Get(':shortId/metrics')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BearerAuthGuard)
   @ApiOperation({ summary: 'Retrieves metrics about a specific shortened url.' })
   @ApiResponse({ status: 200 })
   async getMetrics(@Param('shortId') shortId: string) {

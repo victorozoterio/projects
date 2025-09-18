@@ -1,4 +1,4 @@
-import { JwtAuthGuard } from '@projects/shared/backend';
+import { BearerAuthGuard } from '@projects/shared/backend';
 import {
   Body,
   Controller,
@@ -22,7 +22,7 @@ import { UpdateCampaignDto } from './dto/update-campaign.dto';
 
 @ApiSecurity('x-api-key')
 @ApiBearerAuth('bearer-token')
-@UseGuards(JwtAuthGuard)
+@UseGuards(BearerAuthGuard)
 @Controller('campaigns')
 @ApiTags('Campaigns')
 export class CampaignsController {

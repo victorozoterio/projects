@@ -1,4 +1,4 @@
-import { HealthzModule } from '@projects/shared/backend';
+import { HealthzModule, XApiKeyMiddleware } from '@projects/shared/backend';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -24,6 +24,7 @@ import { UserEntity } from './modules/users/entities/user.entity';
 })
 export class AppRootModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(XApiKeyMiddleware).exclude('healthz', 'auth/(.*)').forRoutes('*');
     consumer
       .apply(UserUuidMiddleware)
       .exclude('healthz', 'auth/(.*)', 'users', 'users/(.*)', {

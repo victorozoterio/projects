@@ -19,11 +19,11 @@ export class InvestmentsService {
     try {
       const { data } = await brapiAxios.get<Brapi>(`/quote/${dto.code}`);
 
-      const invesmentAlreadyExists = await this.repository.findOne({
+      const investmentAlreadyExists = await this.repository.findOne({
         where: { code: dto.code, user },
         relations: ['user'],
       });
-      if (invesmentAlreadyExists) throw new NotFoundException('Investment already exists.');
+      if (investmentAlreadyExists) throw new NotFoundException('Investment already exists.');
 
       const investment = this.repository.create({ ...dto, name: data.results[0].longName, user });
       return await this.repository.save(investment);
