@@ -1,20 +1,35 @@
 import { HealthzModule } from '@projects/shared/backend';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { databaseConfig, envConfig } from './config';
+import { InvestmentsModule } from './modules/investments/investments.module';
+import { UserUuidMiddleware } from './middlewares';
+import { UserEntity } from './modules/users/entities/user.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot(envConfig),
     TypeOrmModule.forRootAsync(databaseConfig),
+    TypeOrmModule.forFeature([UserEntity]),
     HealthzModule,
     AuthModule,
     UsersModule,
+    InvestmentsModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppRootModule {}
+export class AppRootModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserUuidMiddleware)
+      .exclude('healthz', 'auth/(.*)', 'users', 'users/(.*)', {
+        path: 'investments/(.*)',
+        method: RequestMethod.GET,
+      })
+      .forRoutes('*');
+  }
+}
