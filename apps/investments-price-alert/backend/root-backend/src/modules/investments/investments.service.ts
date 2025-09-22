@@ -1,3 +1,4 @@
+import { sendEmail } from '@projects/shared/backend';
 import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateInvestmentDto } from './dto/create-investment.dto';
 import { InvestmentEntity } from './entities/investment.entity';
@@ -58,9 +59,12 @@ export class InvestmentsService {
           if (canNotify && isActive && desiredPurchaseValue > regularMarketPrice) {
             const percent = Math.abs(((regularMarketPrice - desiredPurchaseValue) / desiredPurchaseValue) * 100);
 
-            console.log(
-              `${user.email} o investimento ${code} está custando R$ ${regularMarketPrice}, ou seja, ${percent.toFixed(2)}% abaixo do valor de compra que você definiu como R$ ${desiredPurchaseValue}`,
-            );
+            await sendEmail({
+              from: 'no-reply@victorozoterio.site',
+              to: user.email,
+              subject: `Hora de comprar ${code}`,
+              body: `O investimento ${code} está custando R$ ${regularMarketPrice}, ou seja, ${percent.toFixed(2)}% abaixo do valor de compra que você definiu como R$ ${desiredPurchaseValue}`,
+            });
 
             this.repository.merge(investment, { lastEmailSentAt: endOfDay(today) });
             await this.repository.save(investment);
@@ -69,9 +73,12 @@ export class InvestmentsService {
           if (canNotify && isActive && desiredSalesPrice < regularMarketPrice) {
             const percent = Math.abs(((regularMarketPrice - desiredSalesPrice) / desiredSalesPrice) * 100);
 
-            console.log(
-              `${user.email} o investimento ${code} está custando R$ ${regularMarketPrice}, ou seja, ${percent.toFixed(2)}% acima do valor de venda que você definiu como R$ ${desiredSalesPrice}`,
-            );
+            await sendEmail({
+              from: 'no-reply@victorozoterio.site',
+              to: user.email,
+              subject: `Hora de vender ${code}`,
+              body: `O investimento ${code} está custando R$ ${regularMarketPrice}, ou seja, ${percent.toFixed(2)}% acima do valor de venda que você definiu como R$ ${desiredSalesPrice}`,
+            });
 
             this.repository.merge(investment, { lastEmailSentAt: endOfDay(today) });
             await this.repository.save(investment);
