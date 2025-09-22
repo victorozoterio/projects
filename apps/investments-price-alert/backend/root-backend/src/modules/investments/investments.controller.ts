@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { InvestmentsService } from './investments.service';
 import { CreateInvestmentDto } from './dto/create-investment.dto';
@@ -31,8 +32,8 @@ export class InvestmentsController {
   @ApiHeaders([{ name: 'User-Uuid', required: true }])
   @ApiOperation({ summary: 'Creates a new investment in the system.' })
   @ApiResponse({ status: 201, description: 'Returns the investment created.' })
-  async create(@Body() createInvestimentDto: CreateInvestmentDto, @UserDecorator() user: UserEntity) {
-    return this.investmentsService.create(createInvestimentDto, user);
+  async create(@Body() dto: CreateInvestmentDto, @UserDecorator() user: UserEntity) {
+    return this.investmentsService.create(dto, user);
   }
 
   @Get()
@@ -60,6 +61,13 @@ export class InvestmentsController {
     @UserDecorator() user: UserEntity,
   ) {
     return await this.investmentsService.update(uuid, dto, user);
+  }
+
+  @Patch('/change-status/:uuid')
+  @ApiOperation({ summary: 'Updates status of an existing investment.' })
+  @ApiResponse({ status: 200, type: InvestmentResponseDto })
+  async changeStatus(@Param('uuid', new ParseUUIDPipe()) uuid: string, @UserDecorator() user: UserEntity) {
+    return await this.investmentsService.changeStatus(uuid, user);
   }
 
   @Delete(':uuid')

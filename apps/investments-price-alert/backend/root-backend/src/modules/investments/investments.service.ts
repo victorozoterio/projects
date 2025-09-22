@@ -7,6 +7,7 @@ import { brapiAxios } from '../../config';
 import { Brapi } from '../../types';
 import { UserEntity } from '../users/entities/user.entity';
 import { UpdateInvestmentDto } from './dto/update-investment.dto';
+import { addWeeks, endOfDay, isAfter } from 'date-fns';
 
 @Injectable()
 export class InvestmentsService {
@@ -16,21 +17,22 @@ export class InvestmentsService {
   ) {}
 
   async create(dto: CreateInvestmentDto, user: UserEntity) {
+    let brapiData: Brapi;
+
     try {
       const { data } = await brapiAxios.get<Brapi>(`/quote/${dto.code}`);
-
-      const investmentAlreadyExists = await this.repository.findOne({
-        where: { code: dto.code, user },
-        relations: ['user'],
-      });
-      if (investmentAlreadyExists) throw new NotFoundException('Investment already exists.');
-
-      const investment = this.repository.create({ ...dto, name: data.results[0].longName, user });
-      return await this.repository.save(investment);
+      brapiData = data;
     } catch (error) {
-      if (error?.response?.status === 404) throw new NotFoundException('Investment does not exist.');
       throw new InternalServerErrorException(error.message);
     }
+
+    const investmentAlreadyExists = await this.repository.findOne({
+      where: { code: dto.code, user: { uuid: user.uuid } },
+    });
+    if (investmentAlreadyExists) throw new NotFoundException('Investment already exists.');
+
+    const investment = this.repository.create({ ...dto, name: brapiData.results[0].longName, user });
+    return await this.repository.save(investment);
   }
 
   async findAllByUser(user: UserEntity) {
@@ -46,27 +48,33 @@ export class InvestmentsService {
         const { data } = await brapiAxios.get<Brapi>(`/quote/${code}`);
         const regularMarketPrice = data.results[0].regularMarketPrice;
 
-        console.log(`${code}: Preço atual R$ ${regularMarketPrice}`);
-
         const investmentsWithCode = investments.filter((investment) => investment.code === code);
 
         for (const investment of investmentsWithCode) {
-          const { desiredPurchaseValue, desiredSalesPrice, user } = investment;
+          const { desiredPurchaseValue, desiredSalesPrice, isActive, lastEmailSentAt, user } = investment;
+          const today = new Date();
+          const canNotify = isAfter(today, addWeeks(lastEmailSentAt, 1));
 
-          if (desiredPurchaseValue > regularMarketPrice) {
+          if (canNotify && isActive && desiredPurchaseValue > regularMarketPrice) {
             const percent = Math.abs(((regularMarketPrice - desiredPurchaseValue) / desiredPurchaseValue) * 100);
 
             console.log(
               `${user.email} o investimento ${code} está custando R$ ${regularMarketPrice}, ou seja, ${percent.toFixed(2)}% abaixo do valor de compra que você definiu como R$ ${desiredPurchaseValue}`,
             );
+
+            this.repository.merge(investment, { lastEmailSentAt: endOfDay(today) });
+            await this.repository.save(investment);
           }
 
-          if (desiredSalesPrice < regularMarketPrice) {
+          if (canNotify && isActive && desiredSalesPrice < regularMarketPrice) {
             const percent = Math.abs(((regularMarketPrice - desiredSalesPrice) / desiredSalesPrice) * 100);
 
             console.log(
               `${user.email} o investimento ${code} está custando R$ ${regularMarketPrice}, ou seja, ${percent.toFixed(2)}% acima do valor de venda que você definiu como R$ ${desiredSalesPrice}`,
             );
+
+            this.repository.merge(investment, { lastEmailSentAt: endOfDay(today) });
+            await this.repository.save(investment);
           }
         }
       } catch (error) {
@@ -81,6 +89,15 @@ export class InvestmentsService {
     if (investment.user.uuid !== user.uuid) throw new UnauthorizedException('Investment does not belong to user.');
 
     this.repository.merge(investment, dto);
+    return await this.repository.save(investment);
+  }
+
+  async changeStatus(uuid: string, user: UserEntity) {
+    const investment = await this.repository.findOne({ where: { uuid }, relations: ['user'] });
+    if (!investment) throw new NotFoundException('Investment does not exist.');
+    if (investment.user.uuid !== user.uuid) throw new UnauthorizedException('Investment does not belong to user.');
+
+    this.repository.merge(investment, { isActive: !investment.isActive });
     return await this.repository.save(investment);
   }
 

@@ -28,20 +28,26 @@ export class CreateInvestmentsTable1758163116472 implements MigrationInterface {
             type: 'varchar',
           },
           {
+            name: 'is_active',
+            type: 'boolean',
+            default: true,
+          },
+          {
             name: 'desired_purchase_value',
-            type: 'decimal',
-            precision: 15,
-            scale: 2,
+            type: 'integer',
           },
           {
             name: 'desired_sales_price',
-            type: 'decimal',
-            precision: 15,
-            scale: 2,
+            type: 'integer',
           },
           {
             name: 'user_uuid',
             type: 'uuid',
+          },
+          {
+            name: 'last_email_sent_at',
+            type: 'timestamp with time zone',
+            isNullable: true,
           },
           {
             name: 'created_at',
