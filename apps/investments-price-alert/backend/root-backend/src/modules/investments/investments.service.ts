@@ -8,7 +8,8 @@ import { brapiAxios } from '../../config';
 import { Brapi } from '../../types';
 import { UserEntity } from '../users/entities/user.entity';
 import { UpdateInvestmentDto } from './dto/update-investment.dto';
-import { addWeeks, endOfDay, isAfter } from 'date-fns';
+import { addWeeks, isAfter, startOfDay } from 'date-fns';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class InvestmentsService {
@@ -40,6 +41,7 @@ export class InvestmentsService {
     return await this.repository.find({ where: { user: { uuid: user.uuid } } });
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_8AM)
   async runInvestmentAlerts() {
     const investments = await this.repository.find({ relations: ['user'] });
     const codesWithoutDuplicates = [...new Set(investments.map((investment) => investment.code))];
@@ -66,7 +68,7 @@ export class InvestmentsService {
               body: `O investimento ${code} está custando R$ ${regularMarketPrice}, ou seja, ${percent.toFixed(2)}% abaixo do valor de compra que você definiu como R$ ${desiredPurchaseValue}`,
             });
 
-            this.repository.merge(investment, { lastEmailSentAt: endOfDay(today) });
+            this.repository.merge(investment, { lastEmailSentAt: startOfDay(today) });
             await this.repository.save(investment);
           }
 
@@ -80,7 +82,7 @@ export class InvestmentsService {
               body: `O investimento ${code} está custando R$ ${regularMarketPrice}, ou seja, ${percent.toFixed(2)}% acima do valor de venda que você definiu como R$ ${desiredSalesPrice}`,
             });
 
-            this.repository.merge(investment, { lastEmailSentAt: endOfDay(today) });
+            this.repository.merge(investment, { lastEmailSentAt: startOfDay(today) });
             await this.repository.save(investment);
           }
         }

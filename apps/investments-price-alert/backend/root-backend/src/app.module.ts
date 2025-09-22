@@ -7,11 +7,13 @@ import { ConfigModule } from '@nestjs/config';
 import { databaseConfig, envConfig } from './config';
 import { InvestmentsModule } from './modules/investments/investments.module';
 import { UserEntity } from './modules/users/entities/user.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot(envConfig),
     TypeOrmModule.forRootAsync(databaseConfig),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forFeature([UserEntity]),
     HealthzModule,
     AuthModule,

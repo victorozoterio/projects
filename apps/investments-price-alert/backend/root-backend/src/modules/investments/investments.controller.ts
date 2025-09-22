@@ -44,13 +44,6 @@ export class InvestmentsController {
     return await this.investmentsService.findAllByUser(user);
   }
 
-  @Get('run-alerts')
-  @ApiOperation({ summary: 'Runs the investments price alerts.' })
-  @ApiResponse({ status: 200 })
-  async runInvestmentAlerts() {
-    return await this.investmentsService.runInvestmentAlerts();
-  }
-
   @Put(':uuid')
   @ApiHeaders([{ name: 'User-Uuid', required: true }])
   @ApiOperation({ summary: 'Updates information of an existing investment.' })
@@ -64,6 +57,7 @@ export class InvestmentsController {
   }
 
   @Patch('/change-status/:uuid')
+  @ApiHeaders([{ name: 'User-Uuid', required: true }])
   @ApiOperation({ summary: 'Updates status of an existing investment.' })
   @ApiResponse({ status: 200, type: InvestmentResponseDto })
   async changeStatus(@Param('uuid', new ParseUUIDPipe()) uuid: string, @UserDecorator() user: UserEntity) {
