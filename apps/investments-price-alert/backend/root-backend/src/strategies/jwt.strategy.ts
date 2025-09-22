@@ -1,6 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { UserEntity } from '../modules/users/entities/user.entity';
+import { Repository } from 'typeorm';
 
 interface JwtPayload {
   sub: string;
@@ -11,7 +14,10 @@ interface JwtPayload {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly users: Repository<UserEntity>,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -19,7 +25,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload) {
-    return { uuid: payload.sub, email: payload.email };
+  async validate(payload: JwtPayload): Promise<UserEntity> {
+    const user = await this.users.findOneBy({ uuid: payload.sub });
+    if (!user) throw new NotFoundException('User does not exist.');
+    return user;
   }
 }
