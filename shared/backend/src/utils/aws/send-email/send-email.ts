@@ -1,5 +1,5 @@
 import { SendEmailCommand } from '@aws-sdk/client-ses';
-import { awsConfig } from '../../config';
+import { awsClients } from 'shared/backend/src/config';
 import { SendEmailProps } from './types';
 
 export async function sendEmail({ from, to, subject, body, replyTo }: SendEmailProps): Promise<boolean> {
@@ -17,7 +17,7 @@ export async function sendEmail({ from, to, subject, body, replyTo }: SendEmailP
       },
     });
 
-    await awsConfig().ses.send(command);
+    await awsClients().ses.send(command);
     return true;
   } catch (err) {
     console.error('Error sending email:', err);

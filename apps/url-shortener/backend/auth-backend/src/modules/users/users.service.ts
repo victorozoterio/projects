@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
-import { awsConfig } from '../../config';
+import { awsClients } from '../../config';
 import { SignInUserDto } from './dto/sign-in-user.dto';
 import { TokensService } from '../tokens/tokens.service';
 import { TokenType } from '../../utils';
@@ -17,7 +17,7 @@ import { ResetPasswordUserDto } from './dto/reset-password-user.dto';
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
-  private readonly cognito = awsConfig().cognito;
+  private readonly cognito = awsClients().cognito;
   private readonly userPoolId = process.env.AWS_COGNITO_USER_POOL_ID;
 
   constructor(

@@ -1,4 +1,4 @@
-import { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
+import { SESClient } from '@aws-sdk/client-ses';
 
 function getEnvVar(name: string): string {
   const value = process.env[name];
@@ -15,5 +15,5 @@ export const awsConfig = {
 };
 
 export const awsClients = () => ({
-  cognito: new CognitoIdentityProviderClient(awsConfig),
+  ses: new SESClient(awsConfig),
 });

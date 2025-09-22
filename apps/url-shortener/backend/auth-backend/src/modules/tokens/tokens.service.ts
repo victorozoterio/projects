@@ -1,3 +1,4 @@
+import { sendEmail } from '@projects/shared/backend';
 import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,8 +7,8 @@ import { CreateTokenDto } from './dto/create-token.dto';
 import { ValidateTokenDto } from './dto/validate-token.dto';
 import { TokenEntity } from './entities/token.entity';
 import { emailTokenTemplate, generateRandomCode } from './utils';
-import { sendEmail, TokenType } from '../../utils';
-import { awsConfig } from '../../config';
+import { TokenType } from '../../utils';
+import { awsClients } from '../../config';
 import {
   AdminSetUserPasswordCommand,
   AdminUpdateUserAttributesCommand,
@@ -16,7 +17,7 @@ import {
 @Injectable()
 export class TokensService {
   private readonly logger = new Logger(TokensService.name);
-  private readonly cognito = awsConfig().cognito;
+  private readonly cognito = awsClients().cognito;
   private readonly userPoolId = process.env.AWS_COGNITO_USER_POOL_ID;
 
   constructor(
