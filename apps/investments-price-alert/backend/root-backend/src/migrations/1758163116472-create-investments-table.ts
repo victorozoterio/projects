@@ -4,6 +4,8 @@ export class CreateInvestmentsTable1758163116472 implements MigrationInterface {
   private readonly tableName = 'investments';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
+
     await queryRunner.createTable(
       new Table({
         name: this.tableName,
