@@ -16,6 +16,7 @@ export class AuthController {
   @UseGuards(GoogleOauthGuard)
   async googleCallback(@Req() req, @Res() res) {
     const { accessToken } = await this.authService.login(req.user);
-    return res.redirect(`http://${req.get('host')}/docs?accessToken=${accessToken}`);
+    const baseUrl = process.env.APP_URL || `http://${req.get('host')}`;
+    return res.redirect(`${baseUrl}/docs?accessToken=${accessToken}`);
   }
 }
